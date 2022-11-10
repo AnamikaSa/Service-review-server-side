@@ -16,6 +16,21 @@ const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster
 
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
 
+function verifyjwt(req,res,next){
+ const authHeader=req.headers.authorization;
+ if(!authHeader){
+    res.status(401).send({message:'unauthorized'})
+ }
+ const token= authHeader.split(' ')[1];
+ jwt.verify(token, process.env.ACCESS_TOKEN_S,function(err,decoded){
+    if(err){
+        res.status(401).sendsend({message:'unauthorized'})
+    }
+    req.decoded=decoded;
+    next();
+ })
+}
+
 async function run(){
     try{
         const servicesCollection=client.db('service_review').collection('services');
@@ -24,7 +39,8 @@ async function run(){
         app.post('/jwt',(req,res)=>{
         const user= req.body; 
         console.log(user); 
-        const token =jwt.sign (user, process.env.ACCESS_TOKEN_S)     
+        const token =jwt.sign (user, process.env.ACCESS_TOKEN_S)
+        res.send({token});     
     })
 
         app.get('/services', async (req, res) => {
