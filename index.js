@@ -23,7 +23,8 @@ async function run(){
 
         app.post('/jwt',(req,res)=>{
         const user= req.body; 
-        console.log(user);       
+        console.log(user); 
+        const token =jwt.sign (user, process.env.ACCESS_TOKEN_S)     
     })
 
         app.get('/services', async (req, res) => {
