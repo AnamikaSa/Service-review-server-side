@@ -1,5 +1,6 @@
 const express =require("express");
 const cors=require("cors");
+const jwt =require('jsonwebtoken');
 const app= express();
 const { MongoClient, ServerApiVersion } = require('mongodb');
 const port =process.env.PORT||5000;
@@ -19,6 +20,11 @@ async function run(){
     try{
         const servicesCollection=client.db('service_review').collection('services');
         const reviewCollection=client.db('service_review').collection('reviews');
+
+        app.post('/jwt',(req,res)=>{
+        const user= req.body; 
+        console.log(user);       
+    })
 
         app.get('/services', async (req, res) => {
             const query = {}
