@@ -24,7 +24,7 @@ function verifyjwt(req,res,next){
  const token= authHeader.split(' ')[1];
  jwt.verify(token, process.env.ACCESS_TOKEN_S,function(err,decoded){
     if(err){
-        res.status(401).sendsend({message:'unauthorized'})
+     res.status(401).send({message:'unauthorized'})
     }
     req.decoded=decoded;
     next();
@@ -51,13 +51,16 @@ async function run(){
         });
 
         // reviews
-        app.post('/reviews', async (req, res) => {
+        app.post('/reviews', verifyjwt, async (req, res) => {
             const r = req.body;
             const result = await reviewCollection.insertOne(r);
             res.send(result);
         });
-        app.get('/reviews', async (req, res) => {
-            const query = {}
+        app.get('/reviews',verifyjwt, async (req, res) => {
+            const decoded=req.decoded;
+            console.log(decoded);
+            const query = {};
+            
             const cursor = reviewCollection.find(query);
             const r = await cursor.toArray();
             res.send(r);
